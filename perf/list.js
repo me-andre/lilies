@@ -1,5 +1,5 @@
 import Benchmark from 'benchmark';
-import LinkedList from '../LinkedList.js';
+import LinkedList from './dist/LinkedList.js';
 
 function Contained() {
     this.number = Math.random();
