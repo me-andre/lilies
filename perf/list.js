@@ -1,6 +1,5 @@
-var Benchmark = require('benchmark');
-
-var LinkedList = require('../LinkedList');
+import Benchmark from 'benchmark';
+import LinkedList from '../LinkedList.js';
 
 function Contained() {
     this.number = Math.random();
@@ -33,7 +32,7 @@ new Benchmark.Suite()
         console.log(event);
     })
     .on('complete', function() {
-        console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+        console.log('Fastest is ' + this.filter('fastest').map(({ name }) => name));
     })
     .run();
 
@@ -63,7 +62,7 @@ new Benchmark.Suite()
         console.log(event);
     })
     .on('complete', function() {
-        console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+        console.log('Fastest is ' + this.filter('fastest').map('name'));
     })
     .run();
 
@@ -97,7 +96,7 @@ new Benchmark.Suite()
         console.log(event);
     })
     .on('complete', function() {
-        console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+        console.log('Fastest is ' + this.filter('fastest').map('name'));
     })
     .run();
 
@@ -128,7 +127,7 @@ new Benchmark.Suite()
         console.log(event);
     })
     .on('complete', function() {
-        console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+        console.log('Fastest is ' + this.filter('fastest').map('name'));
     })
     .run();
 

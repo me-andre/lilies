@@ -1,6 +1,5 @@
-var Iteration = require('./Iteration');
-
-module.exports = LinkedList;
+import Iteration from './Iteration.js';
+import { at } from './methods/at.js';
 
 function LinkedList() {
     this.first = this.last = null;
@@ -74,9 +73,11 @@ LinkedList.prototype.eachRight = function(iterator, context) {
     return iteration.result;
 };
 
-LinkedList.prototype.at = require('./methods/at');
+LinkedList.prototype.at = at;
 
 function LinkedListItem(value) {
     this.prev = this.next = null;
     this.value = value;
 }
+
+export default LinkedList;

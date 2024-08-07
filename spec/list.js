@@ -1,6 +1,6 @@
-var _ = require('lodash');
-var expect = require('chai').expect;
-var LinkedList = require('../LinkedList');
+import _ from 'lodash';
+import { expect } from 'chai';
+import LinkedList from '../LinkedList.js';
 
 describe('LinkedList', function() {
     var items = spawnItems(10000, function(i) {

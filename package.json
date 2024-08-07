@@ -4,6 +4,7 @@
   "license": "MIT",
   "private": false,
   "main": "LinkedList",
+  "type": "module",
   "devDependencies": {
     "benchmark": "^2.1.4",
     "chai": "^5.1.1",

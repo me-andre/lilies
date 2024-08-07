@@ -1,6 +1,4 @@
-module.exports = at;
-
-function at(index) {
+export function at(index) {
     if (index < 0 || index > this.length - 1) {
         throw new RangeError('index out of bounds');
     }
