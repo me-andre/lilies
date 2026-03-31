@@ -1,4 +1,4 @@
-import type { LoopControlType } from "./LoopControl";
+import type { LoopControlType } from "./LoopControl.js";
 
 export type Callable<Context, Element> =
 	| {

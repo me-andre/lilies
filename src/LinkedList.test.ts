@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { describe, expect, it } from "vitest";
-import LinkedList, { LinkedListItem, LinkedListType } from "./LinkedList";
+import LinkedList, { LinkedListItem, LinkedListType } from "./LinkedList.js";
 
 interface TestValue {
 	number: number;
@@ -167,6 +167,13 @@ describe("LinkedList", function () {
 			fillList(list);
 			const index = items.length / 2 + 1;
 			expect(list.at(index)).toEqual(items[index]);
+		});
+
+		it("finds the element exactly at the middle index", function () {
+			const list = new LinkedList<TestValue>();
+			fillList(list);
+			const middle = (items.length / 2) | 0;
+			expect(list.at(middle)).toEqual(items[middle]);
 		});
 
 		it("works ok if the list is empty", function () {

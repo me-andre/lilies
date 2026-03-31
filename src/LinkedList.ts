@@ -1,6 +1,6 @@
-import LoopControl, { LoopControlType } from "./LoopControl";
-import { at } from "./methods/at";
-import { Callable } from "./Callable";
+import LoopControl, { LoopControlType } from "./LoopControl.js";
+import { at } from "./methods/at.js";
+import { Callable } from "./Callable.js";
 
 export interface LinkedListItem<Item> {
 	prev: LinkedListItem<Item> | null;

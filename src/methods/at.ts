@@ -1,5 +1,5 @@
-import type { LinkedListType } from "../LinkedList";
-import type { LoopControlType } from "../LoopControl";
+import type { LinkedListType } from "../LinkedList.js";
+import type { LoopControlType } from "../LoopControl.js";
 
 interface AtVisitor {
 	index: number;
@@ -42,7 +42,5 @@ AtVisitor.prototype.call = function <Item>(
 ) {
 	if (index === this.index) {
 		loopControl.stop(element);
-	} else if (this.index === this.middle) {
-		loopControl.stop();
 	}
 };
