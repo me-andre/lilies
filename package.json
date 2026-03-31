@@ -14,7 +14,7 @@
 		"prepack": "npm run build",
 		"format": "biome format --write",
 		"perf": "if [ -d perf/dist ]; then rm -rf perf/dist; fi && tsc --outDir perf/dist && node perf/fixImports.js && node perf/list.js",
-    "perf:iterator": "if [ -d perf/dist ]; then rm -rf perf/dist; fi && tsc --outDir perf/dist && node perf/fixImports.js && node perf/iterator.js"
+		"perf:visitor": "if [ -d perf/dist ]; then rm -rf perf/dist; fi && tsc --outDir perf/dist && node perf/fixImports.js && node perf/visitor.js"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.10",

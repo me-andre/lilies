@@ -1,4 +1,4 @@
-import type { IterationType } from "./Iteration";
+import type { LoopControlType } from "./LoopControl";
 
 export type Callable<Context, Element> =
 	| {
@@ -6,12 +6,12 @@ export type Callable<Context, Element> =
 				context: Context,
 				element: Element,
 				index: number,
-				iteration: IterationType<Element>,
+				loopControl: LoopControlType<Element>,
 			): void;
 	  }
 	| ((
 			this: Context,
 			element: Element,
 			index: number,
-			iteration: IterationType<Element>,
+			loopControl: LoopControlType<Element>,
 	  ) => void);

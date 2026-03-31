@@ -26,7 +26,7 @@ Summarizer.prototype.call = function (context, el) {
 };
 
 new Benchmark.Suite()
-	.add("LinkedList#each(Iterator)", function () {
+	.add("LinkedList#each(Visitor)", function () {
 		var summarizer = new Summarizer();
 		list.each(summarizer);
 	})

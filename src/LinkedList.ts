@@ -1,4 +1,4 @@
-import Iteration, { IterationType } from "./Iteration";
+import LoopControl, { LoopControlType } from "./LoopControl";
 import { at } from "./methods/at";
 import { Callable } from "./Callable";
 
@@ -15,11 +15,8 @@ export interface LinkedListType<Item> {
 	push(item: Item): LinkedListItem<Item>;
 	unshift(item: Item): LinkedListItem<Item>;
 	remove(item: LinkedListItem<Item>): void;
-	each<Context>(iterator: Callable<Context, Item>, context?: Context): void;
-	eachRight<Context>(
-		iterator: Callable<Context, Item>,
-		context?: Context,
-	): void;
+	each<Context>(visitor: Callable<Context, Item>, context?: Context): void;
+	eachRight<Context>(visitor: Callable<Context, Item>, context?: Context): void;
 	at(index: number): Item | null;
 }
 
@@ -96,42 +93,42 @@ LinkedList.prototype.remove = function <Item>(
 
 LinkedList.prototype.each = function <Item, Context>(
 	this: LinkedListType<Item>,
-	iterator: (
+	visitor: (
 		this: Context,
 		item: Item,
 		index: number,
-		iteration: IterationType<Item>,
+		loopControl: LoopControlType<Item>,
 	) => void,
 	context: Context,
 ) {
-	const iteration = new Iteration<Item>();
+	const loopControl = new LoopControl<Item>();
 	let item = this.first;
 	let index = 0;
-	while (item && !iteration.broken) {
-		iterator.call(context, item.value, index++, iteration);
+	while (item && !loopControl.broken) {
+		visitor.call(context, item.value, index++, loopControl);
 		item = item.next;
 	}
-	return iteration.result;
+	return loopControl.result;
 };
 
 LinkedList.prototype.eachRight = function <Item, Context>(
 	this: LinkedListType<Item>,
-	iterator: (
+	visitor: (
 		this: Context,
 		item: Item,
 		index: number,
-		iteration: IterationType<Item>,
+		loopControl: LoopControlType<Item>,
 	) => void,
 	context: Context,
 ) {
-	const iteration = new Iteration<Item>();
+	const loopControl = new LoopControl<Item>();
 	let item = this.last;
 	let index = this.length - 1;
-	while (item && !iteration.broken) {
-		iterator.call(context, item.value, index--, iteration);
+	while (item && !loopControl.broken) {
+		visitor.call(context, item.value, index--, loopControl);
 		item = item.prev;
 	}
-	return iteration.result;
+	return loopControl.result;
 };
 
 LinkedList.prototype.at = at;
