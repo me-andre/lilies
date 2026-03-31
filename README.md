@@ -1,6 +1,6 @@
 # 🪷 lilies
 
-A small, dependency-free **doubly linked list** for JavaScript and TypeScript.
+A small, dependency-free doubly **li**nked **li**st in **E**CMA**S**cript.
 Published as **ESM-only** (`"type": "module"`).
 
 ## Installation
