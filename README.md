@@ -20,9 +20,9 @@ import LinkedList from "lilies";
 
 Arrays are the default sequential structure in JavaScript. They are great when you mostly access items by index and let the engine optimize dense storage. They are a worse fit when you need **stable handles to elements** and **O(1) insertion or removal** at a known node, because `splice` and shifting elements get expensive.
 
-This library gives you a classic doubly linked list. Each `push` / `unshift` returns a **`LinkedListNode`** node you can keep. **`remove`** only updates pointers, so repeated inserts and removals in the middle stay predictable where arrays would have to move many elements.
-
-The API is intentionally small: a few list operations, forward and backward traversal with optional early exit, iterators, and indexed access that picks the cheaper direction.
+This library gives you a classic doubly linked list.
+Each `push` / `unshift` returns a **`LinkedListNode`** node you can keep. **`LinkedList.prototype.remove(node)`** only updates pointers, so repeated inserts and removals in the middle stay instantaneous where arrays would have to move many elements.
+A **`LinkedList`** gives you a bunch of useful mutation methods for inserting and removal both single nodes and spans/lists relatively to existing nodes.
 
 ## Common scenarios
 
@@ -38,6 +38,10 @@ If you mostly need **random access by index** or **fast bulk iteration** over co
 
 Constructs an empty list.
 
+### `LinkedList.from(iterable)`
+
+Creates a new list by pushing each value from any iterable (array, generator, another `LinkedList`, etc.).
+
 ### List structure
 
 - **`first` / `last`** — `LinkedListNode<Value> | null`; **`length`** — number of nodes.
@@ -45,9 +49,16 @@ Constructs an empty list.
 
 ### Mutations
 
-- **`push(item)`** — append; returns the new **`LinkedListNode`**.
-- **`unshift(item)`** — prepend; returns the new **`LinkedListNode`**.
-- **`remove(node)`** — detach that node (must belong to this list).
+- **`LinkedList.prototype.push(item)`** — append; returns the new **`LinkedListNode`**.
+- **`LinkedList.prototype.unshift(item)`** — prepend; returns the new **`LinkedListNode`**.
+- **`LinkedList.prototype.insertBefore(node, value)`** — insert a value before `node`; returns the new **`LinkedListNode`**.
+- **`LinkedList.prototype.insertBefore(node, list)`** — insert all nodes from `list` before `node`. The inserted list becomes a sublist view into the target list.
+- **`LinkedList.prototype.insertAfter(node, value)`** — insert a value after `node`; returns the new **`LinkedListNode`**.
+- **`LinkedList.prototype.insertAfter(node, list)`** — insert all nodes from `list` after `node`. The inserted list becomes a sublist view into the target list.
+- **`LinkedList.prototype.remove(node)`** — detach that node (must belong to this list).
+- **`LinkedList.prototype.removeSlice(startNode, endNode)`** — detach a contiguous span of nodes (inclusive).
+- **`LinkedList.prototype.slice(startNode, endNode)`** — copy a contiguous span of values into a new **`LinkedList`**. Does not modify the original.
+- **`static LinkedList.concat(...lists)`** — creates a new **`LinkedList`** by linking the nodes from each list in order. Source lists become sublist views into the result.
 
 ### Traversal
 
@@ -63,7 +74,7 @@ Constructs an empty list.
 
 - **`break()`** — end traversal early.
 
-If you need to extract a value from a traversal, use a closure variable or store it on a visitor object.
+If you need to extract a value from a traversal, use a closure variable or a visitor object.
 
 ### Iterators
 

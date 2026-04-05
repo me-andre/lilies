@@ -52,6 +52,22 @@ export default class LinkedList<Value> {
 		return this[LENGTH];
 	}
 
+	private isFirst(node: LinkedListNode<Value>): boolean {
+		return node === this[FIRST];
+	}
+
+	private isLast(node: LinkedListNode<Value>): boolean {
+		return node === this[LAST];
+	}
+
+	static from<V>(iterable: Iterable<V>): LinkedList<V> {
+		const list = new LinkedList<V>();
+		for (const value of iterable) {
+			list.push(value);
+		}
+		return list;
+	}
+
 	push(item: Value): LinkedListNode<Value> {
 		const node = new LinkedListNode(item);
 		if (this[LAST]) {
@@ -81,10 +97,10 @@ export default class LinkedList<Value> {
 	}
 
 	remove(item: LinkedListNode<Value>): void {
-		if (item === this[LAST]) {
+		if (this.isLast(item)) {
 			this[LAST] = item[PREV];
 		}
-		if (item === this[FIRST]) {
+		if (this.isFirst(item)) {
 			this[FIRST] = item[NEXT];
 		}
 		if (item[NEXT]) {
@@ -103,7 +119,7 @@ export default class LinkedList<Value> {
 		let index = 0;
 		while (item && !loopControl.isBroken()) {
 			visitor.call(context as Context, item.value, index++, loopControl);
-			item = item[NEXT];
+			item = this.isLast(item) ? null : item[NEXT];
 		}
 	}
 
@@ -113,7 +129,7 @@ export default class LinkedList<Value> {
 		let index = this[LENGTH] - 1;
 		while (item && !loopControl.isBroken()) {
 			visitor.call(context as Context, item.value, index--, loopControl);
-			item = item[PREV];
+			item = this.isFirst(item) ? null : item[PREV];
 		}
 	}
 
@@ -125,7 +141,7 @@ export default class LinkedList<Value> {
 		let node = this[FIRST];
 		while (node) {
 			yield node.value;
-			node = node[NEXT];
+			node = this.isLast(node) ? null : node[NEXT];
 		}
 	}
 
@@ -133,7 +149,7 @@ export default class LinkedList<Value> {
 		let node = this[LAST];
 		while (node) {
 			yield node.value;
-			node = node[PREV];
+			node = this.isFirst(node) ? null : node[PREV];
 		}
 	}
 
@@ -141,7 +157,7 @@ export default class LinkedList<Value> {
 		let node = this[FIRST];
 		while (node) {
 			yield node;
-			node = node[NEXT];
+			node = this.isLast(node) ? null : node[NEXT];
 		}
 	}
 
@@ -149,7 +165,156 @@ export default class LinkedList<Value> {
 		let node = this[LAST];
 		while (node) {
 			yield node;
-			node = node[PREV];
+			node = this.isFirst(node) ? null : node[PREV];
 		}
+	}
+
+	insertBefore(node: LinkedListNode<Value>, value: Value): LinkedListNode<Value>;
+	insertBefore(node: LinkedListNode<Value>, list: LinkedList<Value>): void;
+	insertBefore(
+		node: LinkedListNode<Value>,
+		valueOrList: Value | LinkedList<Value>,
+	): LinkedListNode<Value> | undefined {
+		if (valueOrList instanceof LinkedList) {
+			const list = valueOrList;
+			if (!list[FIRST] || !list[LAST]) {
+				return;
+			}
+			const spliceFirst = list[FIRST];
+			const spliceLast = list[LAST];
+
+			spliceFirst[PREV] = node[PREV];
+			spliceLast[NEXT] = node;
+
+			if (node[PREV]) {
+				node[PREV][NEXT] = spliceFirst;
+			}
+			node[PREV] = spliceLast;
+
+			if (this.isFirst(node)) {
+				this[FIRST] = spliceFirst;
+			}
+			this[LENGTH] += list[LENGTH];
+		} else {
+			const newNode = new LinkedListNode(valueOrList);
+			newNode[NEXT] = node;
+			newNode[PREV] = node[PREV];
+
+			if (node[PREV]) {
+				node[PREV][NEXT] = newNode;
+			}
+			node[PREV] = newNode;
+
+			if (this.isFirst(node)) {
+				this[FIRST] = newNode;
+			}
+			this[LENGTH]++;
+			return newNode;
+		}
+	}
+
+	insertAfter(node: LinkedListNode<Value>, value: Value): LinkedListNode<Value>;
+	insertAfter(node: LinkedListNode<Value>, list: LinkedList<Value>): void;
+	insertAfter(
+		node: LinkedListNode<Value>,
+		valueOrList: Value | LinkedList<Value>,
+	): LinkedListNode<Value> | undefined {
+		if (valueOrList instanceof LinkedList) {
+			const list = valueOrList;
+			if (!list[FIRST] || !list[LAST]) {
+				return;
+			}
+			const spliceFirst = list[FIRST];
+			const spliceLast = list[LAST];
+
+			spliceLast[NEXT] = node[NEXT];
+			spliceFirst[PREV] = node;
+
+			if (node[NEXT]) {
+				node[NEXT][PREV] = spliceLast;
+			}
+			node[NEXT] = spliceFirst;
+
+			if (this.isLast(node)) {
+				this[LAST] = spliceLast;
+			}
+			this[LENGTH] += list[LENGTH];
+		} else {
+			const newNode = new LinkedListNode(valueOrList);
+			newNode[PREV] = node;
+			newNode[NEXT] = node[NEXT];
+
+			if (node[NEXT]) {
+				node[NEXT][PREV] = newNode;
+			}
+			node[NEXT] = newNode;
+
+			if (this.isLast(node)) {
+				this[LAST] = newNode;
+			}
+			this[LENGTH]++;
+			return newNode;
+		}
+	}
+
+	slice(startNode: LinkedListNode<Value>, endNode: LinkedListNode<Value>): LinkedList<Value> {
+		const result = new LinkedList<Value>();
+		let node: LinkedListNode<Value> | null = startNode;
+		while (node) {
+			result.push(node.value);
+			node = node === endNode ? null : node[NEXT];
+		}
+		return result;
+	}
+
+	removeSlice(startNode: LinkedListNode<Value>, endNode: LinkedListNode<Value>): void {
+		const prevNode = startNode[PREV];
+		const nextNode = endNode[NEXT];
+
+		if (prevNode) {
+			prevNode[NEXT] = nextNode;
+		}
+		if (nextNode) {
+			nextNode[PREV] = prevNode;
+		}
+
+		if (this.isFirst(startNode)) {
+			this[FIRST] = nextNode;
+		}
+		if (this.isLast(endNode)) {
+			this[LAST] = prevNode;
+		}
+
+		let count = 0;
+		let node: LinkedListNode<Value> | null = startNode;
+		while (node) {
+			const next: LinkedListNode<Value> | null = node === endNode ? null : node[NEXT];
+			node[PREV] = null;
+			node[NEXT] = null;
+			count++;
+			node = next;
+		}
+		this[LENGTH] -= count;
+	}
+
+	static concat<V>(...lists: LinkedList<V>[]): LinkedList<V> {
+		const result = new LinkedList<V>();
+		for (const list of lists) {
+			if (!list[FIRST] || !list[LAST]) {
+				continue;
+			}
+			const spliceFirst = list[FIRST];
+			const spliceLast = list[LAST];
+
+			if (result[LAST]) {
+				result[LAST][NEXT] = spliceFirst;
+				spliceFirst[PREV] = result[LAST];
+			} else {
+				result[FIRST] = spliceFirst;
+			}
+			result[LAST] = spliceLast;
+			result[LENGTH] += list[LENGTH];
+		}
+		return result;
 	}
 }
