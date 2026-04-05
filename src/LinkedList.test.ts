@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { describe, expect, it } from "vitest";
-import LinkedList, { type LinkedListItem } from "./LinkedList.js";
+import LinkedList, { type LinkedListNode } from "./LinkedList.js";
 
 interface TestValue {
 	number: number;
@@ -11,9 +11,9 @@ describe("LinkedList", () => {
 		number: Math.random() * i,
 	}));
 
-	function fillList<List extends { push: (item: TestValue) => LinkedListItem<TestValue> }>(
+	function fillList<List extends { push: (item: TestValue) => LinkedListNode<TestValue> }>(
 		list: List,
-	): LinkedListItem<TestValue>[] {
+	): LinkedListNode<TestValue>[] {
 		return items.map((item) => list.push(item));
 	}
 
@@ -27,7 +27,7 @@ describe("LinkedList", () => {
 		const members: TestValue[] = [];
 		const list = new LinkedList<TestValue>();
 		fillList(list);
-		list.each((member) => {
+		list.forEach((member) => {
 			members.push(member);
 		});
 		expect(members).toHaveLength(items.length);
@@ -37,7 +37,7 @@ describe("LinkedList", () => {
 		const members: TestValue[] = [];
 		const list = new LinkedList<TestValue>();
 		fillList(list);
-		list.each((member) => {
+		list.forEach((member) => {
 			members.push(member);
 		});
 		expect(members).toEqual(items);
@@ -153,7 +153,7 @@ describe("LinkedList", () => {
 		it("walks from the right if the index is above the middle", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
-			list.eachRight = () => {
+			list.forEachRight = () => {
 				throw "i was called";
 			};
 			expect(() => {
@@ -164,7 +164,7 @@ describe("LinkedList", () => {
 		it("walks from the right if a negative index is resolved above the middle", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
-			list.eachRight = () => {
+			list.forEachRight = () => {
 				throw "i was called";
 			};
 			expect(() => {
@@ -199,6 +199,54 @@ describe("LinkedList", () => {
 			expect(list.at(-1.9)).toEqual(items[items.length - 1]);
 		});
 	});
+
+	describe("Symbol.iterator", () => {
+		it("yields all values in order", () => {
+			const list = new LinkedList<TestValue>();
+			fillList(list);
+			expect([...list]).toEqual(items);
+		});
+
+		it("yields nothing for an empty list", () => {
+			const list = new LinkedList<TestValue>();
+			expect([...list]).toEqual([]);
+		});
+	});
+
+	describe("valuesRight()", () => {
+		it("yields all values in reverse", () => {
+			const list = new LinkedList<TestValue>();
+			fillList(list);
+			expect([...list.valuesRight()]).toEqual([...items].reverse());
+		});
+
+		it("yields nothing for an empty list", () => {
+			const list = new LinkedList<TestValue>();
+			expect([...list.valuesRight()]).toEqual([]);
+		});
+	});
+
+	describe("nodes()", () => {
+		it("yields all nodes in order", () => {
+			const list = new LinkedList<TestValue>();
+			const links = fillList(list);
+			const nodes = [...list.nodes()];
+			expect(nodes).toHaveLength(items.length);
+			expect(nodes.map((n) => n.value)).toEqual(items);
+			expect(nodes[0]).toBe(links[0]);
+		});
+	});
+
+	describe("nodesRight()", () => {
+		it("yields all nodes in reverse", () => {
+			const list = new LinkedList<TestValue>();
+			const links = fillList(list);
+			const nodes = [...list.nodesRight()];
+			expect(nodes).toHaveLength(items.length);
+			expect(nodes.map((n) => n.value)).toEqual([...items].reverse());
+			expect(nodes[0]).toBe(links[links.length - 1]);
+		});
+	});
 });
 
 function spawnItems<Item>(count: number, factory: (index: number) => Item) {
@@ -211,7 +259,7 @@ function spawnItems<Item>(count: number, factory: (index: number) => Item) {
 
 function getMembers<Member>(list: LinkedList<Member>) {
 	const members: Member[] = [];
-	list.each((member) => {
+	list.forEach((member) => {
 		members.push(member);
 	});
 	return members;

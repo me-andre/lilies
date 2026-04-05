@@ -33,9 +33,9 @@ fillList(list);
 fillList(array);
 
 new Benchmark.Suite()
-	.add("LinkedList#each()", () => {
+	.add("LinkedList#forEach()", () => {
 		let _sum = 0;
-		list.each((item) => {
+		list.forEach((item) => {
 			_sum += item.number;
 		});
 	})

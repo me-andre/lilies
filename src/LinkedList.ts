@@ -8,17 +8,17 @@ const LAST = Symbol("last");
 const LENGTH = Symbol("length");
 const BROKEN = Symbol("broken");
 
-export class LinkedListItem<Item> {
-	[PREV]: LinkedListItem<Item> | null = null;
-	[NEXT]: LinkedListItem<Item> | null = null;
+export class LinkedListNode<Value> {
+	[PREV]: LinkedListNode<Value> | null = null;
+	[NEXT]: LinkedListNode<Value> | null = null;
 
-	constructor(public value: Item) {}
+	constructor(public value: Value) {}
 
-	get prev(): LinkedListItem<Item> | null {
+	get prev(): LinkedListNode<Value> | null {
 		return this[PREV];
 	}
 
-	get next(): LinkedListItem<Item> | null {
+	get next(): LinkedListNode<Value> | null {
 		return this[NEXT];
 	}
 }
@@ -35,16 +35,16 @@ class LoopControl {
 	}
 }
 
-export default class LinkedList<Item> {
-	[FIRST]: LinkedListItem<Item> | null = null;
-	[LAST]: LinkedListItem<Item> | null = null;
+export default class LinkedList<Value> {
+	[FIRST]: LinkedListNode<Value> | null = null;
+	[LAST]: LinkedListNode<Value> | null = null;
 	[LENGTH] = 0;
 
-	get first(): LinkedListItem<Item> | null {
+	get first(): LinkedListNode<Value> | null {
 		return this[FIRST];
 	}
 
-	get last(): LinkedListItem<Item> | null {
+	get last(): LinkedListNode<Value> | null {
 		return this[LAST];
 	}
 
@@ -52,8 +52,8 @@ export default class LinkedList<Item> {
 		return this[LENGTH];
 	}
 
-	push(item: Item): LinkedListItem<Item> {
-		const node = new LinkedListItem(item);
+	push(item: Value): LinkedListNode<Value> {
+		const node = new LinkedListNode(item);
 		if (this[LAST]) {
 			this[LAST][NEXT] = node;
 			node[PREV] = this[LAST];
@@ -66,8 +66,8 @@ export default class LinkedList<Item> {
 		return node;
 	}
 
-	unshift(item: Item): LinkedListItem<Item> {
-		const node = new LinkedListItem(item);
+	unshift(item: Value): LinkedListNode<Value> {
+		const node = new LinkedListNode(item);
 		if (this[FIRST]) {
 			this[FIRST][PREV] = node;
 			node[NEXT] = this[FIRST];
@@ -80,7 +80,7 @@ export default class LinkedList<Item> {
 		return node;
 	}
 
-	remove(item: LinkedListItem<Item>): void {
+	remove(item: LinkedListNode<Value>): void {
 		if (item === this[LAST]) {
 			this[LAST] = item[PREV];
 		}
@@ -97,7 +97,7 @@ export default class LinkedList<Item> {
 		item[PREV] = item[NEXT] = null;
 	}
 
-	each<Context>(visitor: Callable<Context, Item>, context?: Context): void {
+	forEach<Context>(visitor: Callable<Context, Value>, context?: Context): void {
 		const loopControl = new LoopControl();
 		let item = this[FIRST];
 		let index = 0;
@@ -107,7 +107,7 @@ export default class LinkedList<Item> {
 		}
 	}
 
-	eachRight<Context>(visitor: Callable<Context, Item>, context?: Context): void {
+	forEachRight<Context>(visitor: Callable<Context, Value>, context?: Context): void {
 		const loopControl = new LoopControl();
 		let item = this[LAST];
 		let index = this[LENGTH] - 1;
@@ -117,7 +117,39 @@ export default class LinkedList<Item> {
 		}
 	}
 
-	at(index: number): Item | undefined {
-		return at.call(this, index) as Item | undefined;
+	at(index: number): Value | undefined {
+		return at.call(this, index) as Value | undefined;
+	}
+
+	*[Symbol.iterator](): Iterator<Value> {
+		let node = this[FIRST];
+		while (node) {
+			yield node.value;
+			node = node[NEXT];
+		}
+	}
+
+	*valuesRight(): IterableIterator<Value> {
+		let node = this[LAST];
+		while (node) {
+			yield node.value;
+			node = node[PREV];
+		}
+	}
+
+	*nodes(): IterableIterator<LinkedListNode<Value>> {
+		let node = this[FIRST];
+		while (node) {
+			yield node;
+			node = node[NEXT];
+		}
+	}
+
+	*nodesRight(): IterableIterator<LinkedListNode<Value>> {
+		let node = this[LAST];
+		while (node) {
+			yield node;
+			node = node[PREV];
+		}
 	}
 }

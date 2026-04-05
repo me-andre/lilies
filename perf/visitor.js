@@ -16,15 +16,21 @@ global.Summarizer = class Summarizer {
 };
 
 new Benchmark.Suite()
-	.add("LinkedList#each(Visitor)", () => {
+	.add("LinkedList#forEach(Visitor)", () => {
 		const summarizer = new Summarizer();
-		list.each(summarizer);
+		list.forEach(summarizer);
 	})
-	.add("LinkedList#each(function)", () => {
+	.add("LinkedList#forEach(function)", () => {
 		let _sum = 0;
-		list.each((el) => {
+		list.forEach((el) => {
 			_sum += el.number;
 		});
+	})
+	.add("LinkedList#[Symbol.iterator]", () => {
+		let _sum = 0;
+		for (const el of list) {
+			_sum += el.number;
+		}
 	})
 	.on("cycle", (event) => {
 		console.log(String(event.target));
