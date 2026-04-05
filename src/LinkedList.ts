@@ -1,6 +1,6 @@
-import LoopControl, { LoopControlType } from "./LoopControl.js";
+import type { Callable } from "./Callable.js";
+import LoopControl, { type LoopControlType } from "./LoopControl.js";
 import { at } from "./methods/at.js";
-import { Callable } from "./Callable.js";
 
 export interface LinkedListItem<Item> {
 	prev: LinkedListItem<Item> | null;
@@ -83,32 +83,30 @@ LinkedList.prototype.remove = function <Item>(
 
 LinkedList.prototype.each = function <Item, Context>(
 	this: LinkedListType<Item>,
-	visitor: (this: Context, item: Item, index: number, loopControl: LoopControlType<Item>) => void,
+	visitor: (this: Context, item: Item, index: number, loopControl: LoopControlType) => void,
 	context: Context,
 ) {
-	const loopControl = new LoopControl<Item>();
+	const loopControl = new LoopControl();
 	let item = this.first;
 	let index = 0;
 	while (item && !loopControl.broken) {
 		visitor.call(context, item.value, index++, loopControl);
 		item = item.next;
 	}
-	return loopControl.result;
 };
 
 LinkedList.prototype.eachRight = function <Item, Context>(
 	this: LinkedListType<Item>,
-	visitor: (this: Context, item: Item, index: number, loopControl: LoopControlType<Item>) => void,
+	visitor: (this: Context, item: Item, index: number, loopControl: LoopControlType) => void,
 	context: Context,
 ) {
-	const loopControl = new LoopControl<Item>();
+	const loopControl = new LoopControl();
 	let item = this.last;
 	let index = this.length - 1;
 	while (item && !loopControl.broken) {
 		visitor.call(context, item.value, index--, loopControl);
 		item = item.prev;
 	}
-	return loopControl.result;
 };
 
 LinkedList.prototype.at = at;

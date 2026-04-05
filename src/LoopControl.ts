@@ -1,21 +1,18 @@
 interface LoopControlConstructor {
-	new <Result>(): LoopControlType<Result>;
+	new (): LoopControlType;
 }
 
-export interface LoopControlType<Result> {
+export interface LoopControlType {
 	broken: boolean;
-	result?: Result;
-	stop(result?: Result): void;
+	break(): void;
 }
 
-function LoopControl<Result>(this: LoopControlType<Result>) {
+function LoopControl(this: LoopControlType) {
 	this.broken = false;
-	this.result = void 0;
 }
 
-LoopControl.prototype.stop = function <Result>(this: LoopControlType<Result>, result: Result) {
+LoopControl.prototype.break = function (this: LoopControlType) {
 	this.broken = true;
-	this.result = result;
 };
 
 export default LoopControl as unknown as LoopControlConstructor;

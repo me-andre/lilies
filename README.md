@@ -61,15 +61,14 @@ Constructs an empty list of **`LinkedListType<Item>`**.
 
 **`loopControl`** is a **`LoopControlType`** for the current pass:
 
-- **`stop(result?)`** — end traversal early; optional **`result`** is returned from **`each` / `eachRight`**.
-- **`broken`** / **`result`** — reflect whether the loop stopped and any value passed to **`stop`**.
+- **`break()`** — end traversal early.
+- **`broken`** — reflects whether the loop has been broken.
 
-The traversal methods return the optional **`result`** from **`stop`**, or **`undefined`** if the walk reaches the end.
+If you need to extract a value from a traversal, use a closure variable or store it on a visitor object.
 
 ### Indexed access
 
-- **`at(index)`** — returns the **`value`** at **`index`**. It walks from the nearer end.  
-  Throws **`RangeError`** if **`index`** is out of range (including an empty list).
+- **`at(index)`** — returns the **`value`** at **`index`**, or **`undefined`** if out of range. Negative indices count back from the end (`-1` is the last element). Walks from the nearer end for efficiency. Follows [**`Array.prototype.at`**](https://tc39.es/ecma262/#sec-array.prototype.at) semantics.
 
 Types for **`LinkedListItem`**, **`LinkedListType`**, and **`LoopControlType`** are shipped in the generated **`.d.ts`** files alongside the implementation.
 

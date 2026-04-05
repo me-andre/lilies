@@ -1,54 +1,50 @@
 import _ from "lodash";
 import { describe, expect, it } from "vitest";
-import LinkedList, { LinkedListItem, LinkedListType } from "./LinkedList.js";
+import LinkedList, { type LinkedListItem, type LinkedListType } from "./LinkedList.js";
 
 interface TestValue {
 	number: number;
 }
 
-describe("LinkedList", function () {
-	const items = spawnItems(10000, function (i) {
-		return {
-			number: Math.random() * i,
-		};
-	});
+describe("LinkedList", () => {
+	const items = spawnItems(10000, (i) => ({
+		number: Math.random() * i,
+	}));
 
 	function fillList<List extends { push: (item: TestValue) => LinkedListItem<TestValue> }>(
 		list: List,
 	): LinkedListItem<TestValue>[] {
-		return items.map(function (item) {
-			return list.push(item);
-		});
+		return items.map((item) => list.push(item));
 	}
 
-	it("can be filled in", function () {
-		expect(function () {
+	it("can be filled in", () => {
+		expect(() => {
 			fillList(new LinkedList<TestValue>());
 		}).not.toThrow();
 	});
 
-	it("will contain all the items", function () {
+	it("will contain all the items", () => {
 		const members: TestValue[] = [];
 		const list = new LinkedList<TestValue>();
 		fillList(list);
-		list.each(function (member) {
+		list.each((member) => {
 			members.push(member);
 		});
 		expect(members).toHaveLength(items.length);
 	});
 
-	it("will hold proper values", function () {
+	it("will hold proper values", () => {
 		const members: TestValue[] = [];
 		const list = new LinkedList<TestValue>();
 		fillList(list);
-		list.each(function (member) {
+		list.each((member) => {
 			members.push(member);
 		});
 		expect(members).toEqual(items);
 	});
 
-	describe("LinkedList#push()", function () {
-		it("adds an item to the tail", function () {
+	describe("LinkedList#push()", () => {
+		it("adds an item to the tail", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			const item = { number: 1 };
@@ -57,7 +53,7 @@ describe("LinkedList", function () {
 			expect(_.last(members)).toEqual(item);
 		});
 
-		it("keeps the .length up-to-date", function () {
+		it("keeps the .length up-to-date", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			const item = { number: 1 };
@@ -66,8 +62,8 @@ describe("LinkedList", function () {
 		});
 	});
 
-	describe("LinkedList#unshift()", function () {
-		it("adds an item to the head", function () {
+	describe("LinkedList#unshift()", () => {
+		it("adds an item to the head", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			const item = { number: 1 };
@@ -75,7 +71,7 @@ describe("LinkedList", function () {
 			expect(getMembers(list)[0]).toEqual(item);
 		});
 
-		it("preserves integrity", function () {
+		it("preserves integrity", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			const item = { number: 1 };
@@ -83,7 +79,7 @@ describe("LinkedList", function () {
 			expect(getMembers(list)).toHaveLength(items.length + 1);
 		});
 
-		it("keeps the .length up-to-date", function () {
+		it("keeps the .length up-to-date", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			const item = { number: 1 };
@@ -92,17 +88,17 @@ describe("LinkedList", function () {
 		});
 	});
 
-	describe("LinkedList#remove()", function () {
-		describe("removing a random item from the middle", function () {
+	describe("LinkedList#remove()", () => {
+		describe("removing a random item from the middle", () => {
 			const index = randomIndex(items.length);
 			shouldRemoveAt(index);
 		});
 
-		describe("removing the 1st item", function () {
+		describe("removing the 1st item", () => {
 			shouldRemoveAt(0);
 		});
 
-		describe("removing the 1st item", function () {
+		describe("removing the 1st item", () => {
 			shouldRemoveAt(items.length - 1);
 		});
 
@@ -112,91 +108,91 @@ describe("LinkedList", function () {
 			list.remove(links[index]);
 			const members = getMembers(list);
 
-			it("preserves integrity", function () {
+			it("preserves integrity", () => {
 				expect(members.length).toEqual(items.length - 1);
 			});
 
-			it("removes the given item", function () {
+			it("removes the given item", () => {
 				expect(_.difference(items, members)).toEqual([links[index].value]);
 			});
 
-			it("keeps the .length up-to-date", function () {
+			it("keeps the .length up-to-date", () => {
 				expect(list).toHaveLength(items.length - 1);
 			});
 		}
 	});
 
-	describe("LinkedList#at()", function () {
-		it("finds an element by index", function () {
+	describe("LinkedList#at()", () => {
+		it("finds an element by index", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			const index = randomIndex(items.length);
 			expect(list.at(index)).toEqual(items[index]);
 		});
 
-		it("returns undefined if the index is >= length", function () {
+		it("returns undefined if the index is >= length", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			expect(list.at(items.length)).toBeUndefined();
 			expect(list.at(items.length + 100)).toBeUndefined();
 		});
 
-		it("supports negative indices counting from the end", function () {
+		it("supports negative indices counting from the end", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			expect(list.at(-1)).toEqual(items[items.length - 1]);
 			expect(list.at(-2)).toEqual(items[items.length - 2]);
 		});
 
-		it("returns undefined for negative indices beyond the start", function () {
+		it("returns undefined for negative indices beyond the start", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			expect(list.at(-items.length - 1)).toBeUndefined();
 		});
 
-		it("walks from the right if the index is above the middle", function () {
+		it("walks from the right if the index is above the middle", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
-			list.eachRight = function () {
+			list.eachRight = () => {
 				throw "i was called";
 			};
-			expect(function () {
+			expect(() => {
 				list.at(items.length / 2 + 1);
 			}).toThrow("i was called");
 		});
 
-		it("walks from the right if a negative index is resolved above the middle", function () {
+		it("walks from the right if a negative index is resolved above the middle", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
-			list.eachRight = function () {
+			list.eachRight = () => {
 				throw "i was called";
 			};
-			expect(function () {
+			expect(() => {
 				list.at(-(items.length / 2) + 1);
 			}).toThrow("i was called");
 		});
 
-		it("succeeds if the resolved index is above the middle", function () {
+		it("succeeds if the resolved index is above the middle", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			const index = items.length / 2 + 1;
 			expect(list.at(index)).toEqual(items[index]);
 		});
 
-		it("finds the element exactly at the middle index", function () {
+		it("finds the element exactly at the middle index", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			const middle = (items.length / 2) | 0;
 			expect(list.at(middle)).toEqual(items[middle]);
 		});
 
-		it("returns undefined for an empty list", function () {
+		it("returns undefined for an empty list", () => {
 			const list = new LinkedList<TestValue>();
 			expect(list.at(0)).toBeUndefined();
 			expect(list.at(-1)).toBeUndefined();
 		});
 
-		it("truncates non-integer indices", function () {
+		it("truncates non-integer indices", () => {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			expect(list.at(1.9)).toEqual(items[1]);
@@ -215,7 +211,7 @@ function spawnItems<Item>(count: number, factory: (index: number) => Item) {
 
 function getMembers<Member>(list: LinkedListType<Member>) {
 	const members: Member[] = [];
-	list.each(function (member) {
+	list.each((member) => {
 		members.push(member);
 	});
 	return members;

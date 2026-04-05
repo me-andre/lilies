@@ -1,19 +1,20 @@
 import type { LinkedListType } from "../LinkedList.js";
 import type { LoopControlType } from "../LoopControl.js";
 
-interface AtVisitor {
+interface AtVisitor<Item> {
 	index: number;
-	call<Item>(
-		this: AtVisitor,
+	result: Item | undefined;
+	call(
+		this: AtVisitor<Item>,
 		context: LinkedListType<Item>,
 		element: Item,
 		index: number,
-		loopControl: LoopControlType<Item>,
+		loopControl: LoopControlType,
 	): void;
 }
 
 interface AtVisitorConstructor {
-	new (index: number): AtVisitor;
+	new <Item>(index: number): AtVisitor<Item>;
 }
 
 /**
@@ -23,26 +24,33 @@ export function at<Item>(this: LinkedListType<Item>, index: number): Item | unde
 	const length = this.length;
 	const relativeIndex = Math.trunc(index) || 0;
 	const resolvedIndex = relativeIndex >= 0 ? relativeIndex : length + relativeIndex;
-	if (resolvedIndex < 0 || resolvedIndex >= length) return undefined;
+	if (resolvedIndex < 0 || resolvedIndex >= length) {
+		return undefined;
+	}
 	const middle = (length / 2) | 0;
-	const visitor = new (AtVisitor as unknown as AtVisitorConstructor)(resolvedIndex);
-	return (resolvedIndex <= middle ? this.each(visitor) : this.eachRight(visitor)) as
-		| Item
-		| undefined;
+	const visitor = new (AtVisitor as unknown as AtVisitorConstructor)<Item>(resolvedIndex);
+	if (resolvedIndex <= middle) {
+		this.each(visitor);
+	} else {
+		this.eachRight(visitor);
+	}
+	return visitor.result;
 }
 
-function AtVisitor(this: AtVisitor, index: number) {
+function AtVisitor<Item>(this: AtVisitor<Item>, index: number) {
 	this.index = index;
+	this.result = undefined;
 }
 
 AtVisitor.prototype.call = function <Item>(
-	this: AtVisitor,
-	context: LinkedListType<Item>,
+	this: AtVisitor<Item>,
+	_context: LinkedListType<Item>,
 	element: Item,
 	index: number,
-	loopControl: LoopControlType<Item>,
+	loopControl: LoopControlType,
 ) {
 	if (index === this.index) {
-		loopControl.stop(element);
+		this.result = element;
+		loopControl.break();
 	}
 };
