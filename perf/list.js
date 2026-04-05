@@ -9,30 +9,28 @@ Contained.prototype.method = function () {
 	return this.number;
 };
 
-var items = spawnItems(100000, function (i) {
-	return {
-		number: Math.random() * i,
-	};
-});
+const items = spawnItems(100000, (i) => ({
+	number: Math.random() * i,
+}));
 
 global.list = new LinkedList();
 global.array = [];
 
 new Benchmark.Suite()
-	.add("LinkedList#push()", function () {
+	.add("LinkedList#push()", () => {
 		fillList(list);
 	})
-	.add("Array#push()", function () {
+	.add("Array#push()", () => {
 		fillList(array);
 	})
-	.on("cycle", function (event) {
+	.on("cycle", (event) => {
 		console.log(String(event.target));
 	})
-	.on("error", function (event) {
+	.on("error", (event) => {
 		console.log(event);
 	})
 	.on("complete", function () {
-		console.log("Fastest is " + this.filter("fastest").map(({ name }) => name));
+		console.log(`Fastest is ${this.filter("fastest").map(({ name }) => name)}`);
 	})
 	.run();
 
@@ -43,32 +41,30 @@ fillList(list);
 fillList(array);
 
 new Benchmark.Suite()
-	.add("LinkedList#each()", function () {
-		var sum = 0;
-		list.each(function (item) {
-			sum += item.number;
+	.add("LinkedList#each()", () => {
+		let _sum = 0;
+		list.each((item) => {
+			_sum += item.number;
 		});
 	})
-	.add("Array#forEach()", function () {
-		var sum = 0;
-		array.forEach(function (item) {
-			sum += item.number;
+	.add("Array#forEach()", () => {
+		let _sum = 0;
+		array.forEach((item) => {
+			_sum += item.number;
 		});
 	})
-	.on("cycle", function (event) {
+	.on("cycle", (event) => {
 		console.log(String(event.target));
 	})
-	.on("error", function (event) {
+	.on("error", (event) => {
 		console.log(event);
 	})
 	.on("complete", function () {
-		console.log("Fastest is " + this.filter("fastest").map("name"));
+		console.log(`Fastest is ${this.filter("fastest").map("name")}`);
 	})
 	.run();
 
-global.randomIndex = function (length) {
-	return (Math.random() * length) | 0;
-};
+global.randomIndex = (length) => (Math.random() * length) | 0;
 
 list = new LinkedList();
 array = [];
@@ -77,30 +73,30 @@ fillList(list);
 fillList(array);
 
 new Benchmark.Suite()
-	.add("LinkedList#at()", function () {
-		var sum = 0;
-		for (var i = 0; i < 100; i++) {
-			sum += list.at(randomIndex(list.length));
+	.add("LinkedList#at()", () => {
+		let _sum = 0;
+		for (let i = 0; i < 100; i++) {
+			_sum += list.at(randomIndex(list.length));
 		}
 	})
-	.add("Array#[]", function () {
-		var sum = 0;
-		for (var i = 0; i < 100; i++) {
-			sum += array[randomIndex(array.length)];
+	.add("Array#[]", () => {
+		let _sum = 0;
+		for (let i = 0; i < 100; i++) {
+			_sum += array[randomIndex(array.length)];
 		}
 	})
-	.on("cycle", function (event) {
+	.on("cycle", (event) => {
 		console.log(String(event.target));
 	})
-	.on("error", function (event) {
+	.on("error", (event) => {
 		console.log(event);
 	})
 	.on("complete", function () {
-		console.log("Fastest is " + this.filter("fastest").map("name"));
+		console.log(`Fastest is ${this.filter("fastest").map("name")}`);
 	})
 	.run();
 
-var removeCount = items.length / 2;
+const removeCount = items.length / 2;
 
 prepareListRemove();
 prepareArrayRemove();
@@ -108,8 +104,8 @@ prepareArrayRemove();
 new Benchmark.Suite()
 	.add(
 		"LinkedList#remove()",
-		function () {
-			for (var i = 0; i < global.itemsToRemoveFromList.length; i++) {
+		() => {
+			for (let i = 0; i < global.itemsToRemoveFromList.length; i++) {
 				global.list.remove(global.itemsToRemoveFromList[i]);
 			}
 		},
@@ -119,8 +115,8 @@ new Benchmark.Suite()
 	)
 	.add(
 		"Array#splice()",
-		function () {
-			for (var i = 0; i < global.itemsToRemoveFromArray.length; i++) {
+		() => {
+			for (let i = 0; i < global.itemsToRemoveFromArray.length; i++) {
 				array.splice(global.itemsToRemoveFromArray[i], 1);
 			}
 		},
@@ -128,38 +124,34 @@ new Benchmark.Suite()
 			onCycle: prepareArrayRemove,
 		},
 	)
-	.on("cycle", function (event) {
+	.on("cycle", (event) => {
 		console.log(String(event.target));
 	})
-	.on("error", function (event) {
+	.on("error", (event) => {
 		console.log(event);
 	})
 	.on("complete", function () {
-		console.log("Fastest is " + this.filter("fastest").map("name"));
+		console.log(`Fastest is ${this.filter("fastest").map("name")}`);
 	})
 	.run();
 
 function spawnItems(count, factory) {
-	var items = [];
-	for (var i = 0; i < count; i++) {
+	const items = [];
+	for (let i = 0; i < count; i++) {
 		items.push(factory(i));
 	}
 	return items;
 }
 
 function fillList(list) {
-	return items.map(function (item) {
-		return list.push(item);
-	});
+	return items.map((item) => list.push(item));
 }
 
 function prepareListRemove() {
 	list = new LinkedList();
-	var links = fillList(list);
+	const links = fillList(list);
 	global.itemsToRemoveFromList = pickItemsToRemove(list.length, removeCount);
-	itemsToRemoveFromList = itemsToRemoveFromList.map(function (index) {
-		return links[index];
-	});
+	itemsToRemoveFromList = itemsToRemoveFromList.map((index) => links[index]);
 }
 
 function prepareArrayRemove() {
@@ -169,9 +161,9 @@ function prepareArrayRemove() {
 }
 
 function pickItemsToRemove(length, removeCount) {
-	var itemIndexes = [];
-	for (var i = 0; i < removeCount; i++) {
-		var index = (Math.random() * length--) | 0;
+	const itemIndexes = [];
+	for (let i = 0; i < removeCount; i++) {
+		const index = (Math.random() * length--) | 0;
 		itemIndexes.push(index);
 	}
 	return itemIndexes;
