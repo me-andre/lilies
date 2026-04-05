@@ -97,7 +97,7 @@ const arr = [...list];
 
 ### Indexed access
 
-- **`at(index)`** — returns the **`value`** at **`index`**, or **`undefined`** if out of range. Negative indices count back from the end (`-1` is the last element). Walks from the nearer end for efficiency. Follows [**`Array.prototype.at`**](https://tc39.es/ecma262/#sec-array.prototype.at) semantics.
+- **`at(index)`** — returns the **`value`** at **`index`**, or **`undefined`** if out of range. Negative indices count back from the end (`-1` is the last element). Walks from the nearer end for efficiency. Follows [**`Array.prototype.at`**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at) semantics.
 
 
 ## Performance insights
