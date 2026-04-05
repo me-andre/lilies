@@ -104,9 +104,9 @@ const arr = [...list];
 
 **Indexed access:** Arrays are usually **orders of magnitude faster**. If your code mostly does "get me item at `i`", **use an array**.
 
-**Scanning the whole collection:** Arrays are usually **a bit faster**, but not by a dramatic amount. **Do not choose this library for scan speed alone.**
+**Scanning the whole collection:** Arrays are usually **a bit faster**, but not by a dramatic amount.
 
-**Removing by handle:** `LinkedList` is usually **much faster** when you already have the node you want to remove. **Frequent removals at known positions are the main reason to use this library.**
+**Removing by handle:** `LinkedList` is usually **much faster** when you already have the node you want to remove. **Frequent removals of known elements are the main reason to use this library.**
 
 **Appending:** Usually **close enough that it should not drive the decision**. Choose based on access and removal patterns instead.
 
