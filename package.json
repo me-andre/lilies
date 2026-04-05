@@ -8,6 +8,26 @@
 	"files": [
 		"dist"
 	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/me-andre/lilies.git"
+	},
+	"homepage": "https://github.com/me-andre/lilies#readme",
+	"bugs": {
+		"url": "https://github.com/me-andre/lilies/issues"
+	},
+	"keywords": [
+		"linked-list",
+		"doubly-linked-list",
+		"data-structure",
+		"list",
+		"queue",
+		"deque",
+		"double-ended-queue",
+		"collection",
+		"esm",
+		"iterator"
+	],
 	"scripts": {
 		"test": "vitest run",
 		"build": "if [ -d dist ]; then rm -rf dist; fi && tsc --outDir dist",
