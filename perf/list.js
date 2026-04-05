@@ -1,14 +1,6 @@
 import Benchmark from "benchmark";
 import LinkedList from "./dist/LinkedList.js";
 
-function Contained() {
-	this.number = Math.random();
-}
-
-Contained.prototype.method = function () {
-	return this.number;
-};
-
 const items = spawnItems(100000, (i) => ({
 	number: Math.random() * i,
 }));

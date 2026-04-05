@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { describe, expect, it } from "vitest";
-import LinkedList, { type LinkedListItem, type LinkedListType } from "./LinkedList.js";
+import LinkedList, { type LinkedListItem } from "./LinkedList.js";
 
 interface TestValue {
 	number: number;
@@ -209,7 +209,7 @@ function spawnItems<Item>(count: number, factory: (index: number) => Item) {
 	return items;
 }
 
-function getMembers<Member>(list: LinkedListType<Member>) {
+function getMembers<Member>(list: LinkedList<Member>) {
 	const members: Member[] = [];
 	list.each((member) => {
 		members.push(member);

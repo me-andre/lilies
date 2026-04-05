@@ -1,26 +1,10 @@
-import type { LinkedListType } from "../LinkedList.js";
-import type { LoopControlType } from "../LoopControl.js";
-
-interface AtVisitor<Item> {
-	index: number;
-	result: Item | undefined;
-	call(
-		this: AtVisitor<Item>,
-		context: LinkedListType<Item>,
-		element: Item,
-		index: number,
-		loopControl: LoopControlType,
-	): void;
-}
-
-interface AtVisitorConstructor {
-	new <Item>(index: number): AtVisitor<Item>;
-}
+import type LinkedList from "../LinkedList.js";
+import type LoopControl from "../LoopControl.js";
 
 /**
  * Closely matches https://tc39.es/ecma262/#sec-array.prototype.at
  */
-export function at<Item>(this: LinkedListType<Item>, index: number): Item | undefined {
+export function at<Item>(this: LinkedList<Item>, index: number): Item | undefined {
 	const length = this.length;
 	const relativeIndex = Math.trunc(index) || 0;
 	const resolvedIndex = relativeIndex >= 0 ? relativeIndex : length + relativeIndex;
@@ -28,7 +12,7 @@ export function at<Item>(this: LinkedListType<Item>, index: number): Item | unde
 		return undefined;
 	}
 	const middle = (length / 2) | 0;
-	const visitor = new (AtVisitor as unknown as AtVisitorConstructor)<Item>(resolvedIndex);
+	const visitor = new AtVisitor<Item>(resolvedIndex);
 	if (resolvedIndex <= middle) {
 		this.each(visitor);
 	} else {
@@ -37,20 +21,18 @@ export function at<Item>(this: LinkedListType<Item>, index: number): Item | unde
 	return visitor.result;
 }
 
-function AtVisitor<Item>(this: AtVisitor<Item>, index: number) {
-	this.index = index;
-	this.result = undefined;
-}
+class AtVisitor<Item> {
+	readonly index: number;
+	result: Item | undefined = undefined;
 
-AtVisitor.prototype.call = function <Item>(
-	this: AtVisitor<Item>,
-	_context: LinkedListType<Item>,
-	element: Item,
-	index: number,
-	loopControl: LoopControlType,
-) {
-	if (index === this.index) {
-		this.result = element;
-		loopControl.break();
+	constructor(index: number) {
+		this.index = index;
 	}
-};
+
+	call(_context: LinkedList<Item>, element: Item, index: number, loopControl: LoopControl) {
+		if (index === this.index) {
+			this.result = element;
+			loopControl.break();
+		}
+	}
+}

@@ -1,18 +1,7 @@
-interface LoopControlConstructor {
-	new (): LoopControlType;
+export default class LoopControl {
+	broken = false;
+
+	break() {
+		this.broken = true;
+	}
 }
-
-export interface LoopControlType {
-	broken: boolean;
-	break(): void;
-}
-
-function LoopControl(this: LoopControlType) {
-	this.broken = false;
-}
-
-LoopControl.prototype.break = function (this: LoopControlType) {
-	this.broken = true;
-};
-
-export default LoopControl as unknown as LoopControlConstructor;
