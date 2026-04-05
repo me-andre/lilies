@@ -17,7 +17,7 @@ export interface LinkedListType<Item> {
 	remove(item: LinkedListItem<Item>): void;
 	each<Context>(visitor: Callable<Context, Item>, context?: Context): void;
 	eachRight<Context>(visitor: Callable<Context, Item>, context?: Context): void;
-	at(index: number): Item | null;
+	at(index: number): Item | undefined;
 }
 
 interface LinkedListConstructor {
@@ -33,13 +33,8 @@ function LinkedList<Item>(this: LinkedListType<Item>) {
 	this.length = 0;
 }
 
-LinkedList.prototype.push = function <Item>(
-	this: LinkedListType<Item>,
-	item: Item,
-) {
-	const node = new (
-		LinkedListItem as unknown as LinkedListItemConstructor
-	)<Item>(item);
+LinkedList.prototype.push = function <Item>(this: LinkedListType<Item>, item: Item) {
+	const node = new (LinkedListItem as unknown as LinkedListItemConstructor)<Item>(item);
 	if (this.last) {
 		this.last.next = node;
 		node.prev = this.last;
@@ -52,13 +47,8 @@ LinkedList.prototype.push = function <Item>(
 	return node;
 };
 
-LinkedList.prototype.unshift = function <Item>(
-	this: LinkedListType<Item>,
-	item: Item,
-) {
-	const node = new (
-		LinkedListItem as unknown as LinkedListItemConstructor
-	)<Item>(item);
+LinkedList.prototype.unshift = function <Item>(this: LinkedListType<Item>, item: Item) {
+	const node = new (LinkedListItem as unknown as LinkedListItemConstructor)<Item>(item);
 	if (this.first) {
 		this.first.prev = node;
 		node.next = this.first;
@@ -93,12 +83,7 @@ LinkedList.prototype.remove = function <Item>(
 
 LinkedList.prototype.each = function <Item, Context>(
 	this: LinkedListType<Item>,
-	visitor: (
-		this: Context,
-		item: Item,
-		index: number,
-		loopControl: LoopControlType<Item>,
-	) => void,
+	visitor: (this: Context, item: Item, index: number, loopControl: LoopControlType<Item>) => void,
 	context: Context,
 ) {
 	const loopControl = new LoopControl<Item>();
@@ -113,12 +98,7 @@ LinkedList.prototype.each = function <Item, Context>(
 
 LinkedList.prototype.eachRight = function <Item, Context>(
 	this: LinkedListType<Item>,
-	visitor: (
-		this: Context,
-		item: Item,
-		index: number,
-		loopControl: LoopControlType<Item>,
-	) => void,
+	visitor: (this: Context, item: Item, index: number, loopControl: LoopControlType<Item>) => void,
 	context: Context,
 ) {
 	const loopControl = new LoopControl<Item>();

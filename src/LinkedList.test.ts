@@ -13,9 +13,9 @@ describe("LinkedList", function () {
 		};
 	});
 
-	function fillList<
-		List extends { push: (item: TestValue) => LinkedListItem<TestValue> },
-	>(list: List): LinkedListItem<TestValue>[] {
+	function fillList<List extends { push: (item: TestValue) => LinkedListItem<TestValue> }>(
+		list: List,
+	): LinkedListItem<TestValue>[] {
 		return items.map(function (item) {
 			return list.push(item);
 		});
@@ -134,21 +134,24 @@ describe("LinkedList", function () {
 			expect(list.at(index)).toEqual(items[index]);
 		});
 
-		it("throws an error if the index is > length", function () {
+		it("returns undefined if the index is >= length", function () {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
-			const index = items.length;
-			expect(function () {
-				list.at(index);
-			}).toThrow(RangeError);
+			expect(list.at(items.length)).toBeUndefined();
+			expect(list.at(items.length + 100)).toBeUndefined();
 		});
 
-		it("throws an error if the index is negative", function () {
+		it("supports negative indices counting from the end", function () {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
-			expect(function () {
-				list.at(-1);
-			}).toThrow(RangeError);
+			expect(list.at(-1)).toEqual(items[items.length - 1]);
+			expect(list.at(-2)).toEqual(items[items.length - 2]);
+		});
+
+		it("returns undefined for negative indices beyond the start", function () {
+			const list = new LinkedList<TestValue>();
+			fillList(list);
+			expect(list.at(-items.length - 1)).toBeUndefined();
 		});
 
 		it("walks from the right if the index is above the middle", function () {
@@ -162,7 +165,18 @@ describe("LinkedList", function () {
 			}).toThrow("i was called");
 		});
 
-		it("succeeds if the index is above the middle", function () {
+		it("walks from the right if a negative index is resolved above the middle", function () {
+			const list = new LinkedList<TestValue>();
+			fillList(list);
+			list.eachRight = function () {
+				throw "i was called";
+			};
+			expect(function () {
+				list.at(-(items.length / 2) + 1);
+			}).toThrow("i was called");
+		});
+
+		it("succeeds if the resolved index is above the middle", function () {
 			const list = new LinkedList<TestValue>();
 			fillList(list);
 			const index = items.length / 2 + 1;
@@ -176,14 +190,17 @@ describe("LinkedList", function () {
 			expect(list.at(middle)).toEqual(items[middle]);
 		});
 
-		it("works ok if the list is empty", function () {
+		it("returns undefined for an empty list", function () {
 			const list = new LinkedList<TestValue>();
-			expect(function () {
-				list.at(0);
-			}).toThrow(RangeError);
-			expect(function () {
-				list.at(-1);
-			}).toThrow(RangeError);
+			expect(list.at(0)).toBeUndefined();
+			expect(list.at(-1)).toBeUndefined();
+		});
+
+		it("truncates non-integer indices", function () {
+			const list = new LinkedList<TestValue>();
+			fillList(list);
+			expect(list.at(1.9)).toEqual(items[1]);
+			expect(list.at(-1.9)).toEqual(items[items.length - 1]);
 		});
 	});
 });

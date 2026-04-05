@@ -13,10 +13,7 @@ function LoopControl<Result>(this: LoopControlType<Result>) {
 	this.result = void 0;
 }
 
-LoopControl.prototype.stop = function <Result>(
-	this: LoopControlType<Result>,
-	result: Result,
-) {
+LoopControl.prototype.stop = function <Result>(this: LoopControlType<Result>, result: Result) {
 	this.broken = true;
 	this.result = result;
 };
