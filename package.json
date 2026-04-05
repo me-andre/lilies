@@ -12,7 +12,8 @@
 		"test": "vitest run",
 		"build": "if [ -d dist ]; then rm -rf dist; fi && tsc --outDir dist",
 		"prepack": "npm run build",
-		"format": "biome format --write",
+		"lint": "biome check && tsc --noEmit",
+		"lint:fix": "biome check --write --unsafe && tsc --noEmit",
 		"perf": "if [ -d perf/dist ]; then rm -rf perf/dist; fi && tsc --outDir perf/dist && node perf/fixImports.js && node perf/list.js",
 		"perf:visitor": "if [ -d perf/dist ]; then rm -rf perf/dist; fi && tsc --outDir perf/dist && node perf/fixImports.js && node perf/visitor.js"
 	},
