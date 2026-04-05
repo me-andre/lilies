@@ -53,8 +53,8 @@ Creates a new list by pushing each value from any iterable (array, generator, an
 
 ### Mutations
 
-- **`LinkedList.prototype.push(item)`** — append; returns the new **`LinkedListNode`**.
-- **`LinkedList.prototype.unshift(item)`** — prepend; returns the new **`LinkedListNode`**.
+- **`LinkedList.prototype.push(value)`** — append; returns the new **`LinkedListNode`**.
+- **`LinkedList.prototype.unshift(value)`** — prepend; returns the new **`LinkedListNode`**.
 - **`LinkedList.prototype.insertBefore(node, value)`** — insert a value before `node`; returns the new **`LinkedListNode`**.
 - **`LinkedList.prototype.insertBefore(node, list)`** — insert all nodes from `list` before `node`. The inserted list becomes a sublist view into the target list.
 - **`LinkedList.prototype.insertAfter(node, value)`** — insert a value after `node`; returns the new **`LinkedListNode`**.
