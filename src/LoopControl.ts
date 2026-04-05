@@ -1,7 +1,3 @@
-export default class LoopControl {
-	broken = false;
-
-	break() {
-		this.broken = true;
-	}
-}
+export type LoopControl = {
+	break(): void;
+};

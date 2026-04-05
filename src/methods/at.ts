@@ -1,5 +1,5 @@
 import type LinkedList from "../LinkedList.js";
-import type LoopControl from "../LoopControl.js";
+import type { LoopControl } from "../LoopControl.js";
 
 /**
  * Closely matches https://tc39.es/ecma262/#sec-array.prototype.at
